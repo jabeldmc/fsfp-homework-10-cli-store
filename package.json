@@ -4,8 +4,8 @@
   "description": "Full Stack Flex Program Homework 10: CLI Store",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1" ,
-    "mon": "nodemon index.js" ,
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mon": "nodemon index.js",
     "start": "node index.js"
   },
   "repository": {
@@ -19,8 +19,9 @@
   },
   "homepage": "https://github.com/jabeldmc/fsfp-homework-10-cli-store#readme",
   "dependencies": {
-    "nodemon": "1.18.9",
-    "inquirer": "6.2.1",
-    "mysql": "^2.13.0"
+    "inquirer": "^6.2.1",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.9",
+    "table": "^5.2.1"
   }
 }

@@ -1,14 +1,16 @@
 /*** /database/schema.sql
 ***/
 
+DROP DATABASE IF EXISTS fsfp_store;
+
 CREATE DATABASE fsfp_store;
 
 USE fsfp_store;
 
 CREATE TABLE products (
-    item_id    INTEGER AUTO_INCREMENT PRIMARY KEY ,
-    product_name    VARCHAR( 255 ) ,
-    department_name    VARCHAR( 255 ) ,
-    price    DECIMAL( 10 , 2 ) ,
-    stock_quantity    INTEGER
+    id    INTEGER AUTO_INCREMENT PRIMARY KEY ,
+    product_name    VARCHAR( 255 ) NOT NULL UNIQUE ,
+    department_name    VARCHAR( 255 ) NOT NULL ,
+    price    DECIMAL( 10 , 2 ) NOT NULL ,
+    stock_quantity    INTEGER NOT NULL
 );
