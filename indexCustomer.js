@@ -6,7 +6,6 @@
 ***/
 
 const productUtil = require( './productUtil' );
-console.log( productUtil );
 const inquirer = require( 'inquirer' );
 
 
@@ -30,7 +29,8 @@ const askOrder = async function() {
                 {
                     type : 'input' ,
                     name : 'quantity' ,
-                    message : 'How many?'
+                    message : 'How many?' ,
+                    validate : ( input ) => !isNaN( input )
                 }
             ]
         )
@@ -61,7 +61,7 @@ const doOrder = async function( order ) {
     }
 
     // purchase product
-    var updateResult = await productUtil.updateProduct( order.id , order.quantity );
+    var updateResult = await productUtil.updateProductReduceStockQuantity( order.id , order.quantity );
 
     // order total
     var total = ( queryResult.rows[ 0 ].price * order.quantity );

@@ -28,6 +28,24 @@ const tableSettings = {
 var connection;
 
 
+/*** FUNCTION getFieldsString()
+***/
+
+const getFieldsString = function( fields ) {
+    // fields to select
+    var fieldsString;
+    if ( fields ) {
+        fieldsString = fields.join( ' , ' );
+    }
+    else {
+        fieldsString = '*';
+    }
+
+    return fieldsString;
+}
+
+
+
 /*** FUNCTION getConnection()
 ***/
 
@@ -74,13 +92,7 @@ const openConnection = function() {
 
 const queryProducts = function( fields ) {
     // fields to select
-    var fieldsString;
-    if ( fields ) {
-        fieldsString = fields.join( ' , ' );
-    }
-    else {
-        fieldsString = '*';
-    }
+    var fieldsString = getFieldsString( fields );
 
     // prepare query
     var sql = `SELECT ${fieldsString} FROM products`;
@@ -103,14 +115,7 @@ const queryProducts = function( fields ) {
 ***/
 
 const queryProduct = function( id , fields ) {
-    // fields to select
-    var fieldsString;
-    if ( fields ) {
-        fieldsString = fields.join( ' , ' );
-    }
-    else {
-        fieldsString = '*';
-    }
+    var fieldsString = getFieldsString( fields );
 
     // prepare query
     var sql = mysql.format(
@@ -132,14 +137,117 @@ const queryProduct = function( id , fields ) {
 }
 
 
-/*** FUNCTION updateProduct()
+/*** FUNCTION queryProductByName()
 ***/
 
-const updateProduct = function( id , minusQuantity ) {
+const queryProductByName = function( productName , fields ) {
+    var fieldsString = getFieldsString( fields );
+
     // prepare query
     var sql = mysql.format(
-        `UPDATE products SET ?? = ( ?? - ? ) WHERE ?? = ?` ,
-        [ 'stock_quantity' , 'stock_quantity' , minusQuantity , 'id' , id ]
+        `SELECT ${fieldsString} FROM products WHERE ?? = ?` ,
+        [ 'product_name' , productName ]
+    );
+
+    // return promise
+    return new Promise(
+        ( resolve , reject ) => {
+            connection.query(
+                sql ,
+                ( error , rows , fields ) => {
+                    resolve( { error: error , rows: rows , fields: fields } );
+                }
+            );
+        }
+    );
+}
+
+
+/*** FUNCTION queryProductsLessThan()
+***/
+
+const queryProductsLessThan = function( stock_quantity , fields ) {
+    var fieldsString = getFieldsString( fields );
+
+    // prepare query
+    var sql = mysql.format(
+        `SELECT ${fieldsString} FROM products WHERE ?? <= ?` ,
+        [ 'stock_quantity' , stock_quantity ]
+    );
+
+    // return promise
+    return new Promise(
+        ( resolve , reject ) => {
+            connection.query(
+                sql ,
+                ( error , rows , fields ) => {
+                    resolve( { error: error , rows: rows , fields: fields } );
+                }
+            );
+        }
+    );
+}
+
+
+/*** FUNCTION updateProductReduceStockQuantity()
+***/
+
+const updateProductReduceStockQuantity = function( id , stock_quantity ) {
+    // prepare query
+    var sql = mysql.format(
+        'UPDATE products SET ?? = ( ?? - ? ) WHERE ?? = ?' ,
+        [ 'stock_quantity' , 'stock_quantity' , stock_quantity , 'id' , id ]
+    );
+
+    // return promise
+    return new Promise(
+        ( resolve , reject ) => {
+            connection.query(
+                sql ,
+                ( error , rows , fields ) => {
+                    resolve( { error: error , rows: rows , fields: fields } );
+                }
+            );
+        }
+    );
+}
+
+
+/*** FUNCTION updateProductAddStockQuantity()
+***/
+
+const updateProductAddStockQuantity = function( id , stock_quantity ) {
+    // prepare query
+    var sql = mysql.format(
+        'UPDATE products SET ?? = ( ?? + ? ) WHERE ?? = ?' ,
+        [ 'stock_quantity' , 'stock_quantity' , stock_quantity , 'id' , id ]
+    );
+
+    // return promise
+    return new Promise(
+        ( resolve , reject ) => {
+            connection.query(
+                sql ,
+                ( error , rows , fields ) => {
+                    resolve( { error: error , rows: rows , fields: fields } );
+                }
+            );
+        }
+    );
+}
+
+
+/*** FUNCTION insertProduct()
+***/
+
+const insertProduct = function( newProduct ) {
+    // prepare query
+    var sql = mysql.format(
+        'INSERT INTO products ( ?? , ?? , ?? , ?? ) VALUES ( ? , ? , ? , ? )' ,
+        [
+            'product_name' , 'department_name' , 'price' , 'stock_quantity' ,
+            newProduct.productName , newProduct.departmentName , newProduct.price , newProduct.stockQuantity
+        ]
     );
 
     // return promise
@@ -199,7 +307,11 @@ module.exports = {
     openConnection : openConnection ,
     queryProducts : queryProducts ,
     queryProduct : queryProduct ,
-    updateProduct : updateProduct ,
+    queryProductByName : queryProductByName ,
+    queryProductsLessThan : queryProductsLessThan ,
+    updateProductReduceStockQuantity : updateProductReduceStockQuantity ,
+    updateProductAddStockQuantity : updateProductAddStockQuantity ,
+    insertProduct : insertProduct ,
     closeConnection : closeConnection ,
     queryResultToString : queryResultToString
 };
