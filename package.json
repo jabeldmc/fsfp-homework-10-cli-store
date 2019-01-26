@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "mon": "nodemon index.js",
-    "start": "node index.js"
+    "monCustomer": "nodemon indexCustomer.js",
+    "monManager": "nodemon indexManager.js",
+    "startCustomer": "node indexCustomer.js"
+    "startManager": "node indexManager.js"
   },
   "repository": {
     "type": "git",

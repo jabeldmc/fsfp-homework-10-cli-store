@@ -187,7 +187,6 @@ const main = async function() {
 
         console.log( '' );
         console.log( 'Good morning, Mr. Manager!' );
-        console.log( '' );
 
         var command;
         do {
